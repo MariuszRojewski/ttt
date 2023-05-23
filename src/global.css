@@ -11,3 +11,31 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.square {
+  background: lightblue;
+  border: 2px solid darkblue;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  line-height: 3rem;
+}
+
+.board {
+  border: 4px solid darkblue;
+  border-radius: 10px;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.game {
+  width: 200px;
+  margin: 20px auto;
+}

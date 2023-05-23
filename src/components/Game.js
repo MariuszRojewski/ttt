@@ -1,49 +1,41 @@
 import React from "react";
-
 import Board from "./Board";
 import { calculateWinner } from "../helpers";
 
-const styles = {
-  width: "200px",
-  margin: "20px auto",
-};
-
 const Game = () => {
-  const [board, setBoard] = React.useState(Array(9).fill(null));
-  const [xIsNext, setXisNext] = React.useState(true);
-  const winner = calculateWinner(board);
+  const [squares, setSquares] = React.useState(Array(9).fill(null));
+  const [player, setPlayer] = React.useState(true);
+  const winner = calculateWinner(squares);
 
-  function handleClick(i) {
-    const boardCopy = [...board];
-    // Blokada gry w sytuacji gdzier gracz wygrał
-    // albo kliknął wcześniej zajęte pole
-    if (winner || boardCopy[i]) return;
-    // Wszadź X albo O do kliknietego kwadratu
-    boardCopy[i] = xIsNext ? "X" : "O";
-    setBoard(boardCopy);
-    setXisNext(!xIsNext);
+  function handlePlayerSquareSelect(index) {
+    const board = [...squares];
+
+    if (board[index] || winner) return;
+
+    board[index] = player ? "X" : "O";
+    setSquares(board);
+    setPlayer(!player);
   }
 
-  function renderMoves() {
-    return (
-      <button onClick={() => setBoard(Array(9).fill(null))}>Start Game</button>
-    );
+  function newGame() {
+    setSquares(Array(9).fill(null));
+    setPlayer(true);
   }
-
-  function jumpTp() {}
 
   return (
-    <>
-      <Board squares={board} onClick={handleClick} />
-      <div style={styles}>
-        <p>
-          {winner
-            ? "Winner: " + winner
-            : "Next Palyer: " + (xIsNext ? "X" : "O")}
-        </p>
-        {renderMoves()}
-      </div>
-    </>
+    <div className="game">
+      <Board squares={squares} onClick={handlePlayerSquareSelect} />
+      {winner ? (
+        <div className="winner">
+          <p>Wygrywa gracz: {winner}</p>
+        </div>
+      ) : (
+        <div className="player">
+          <p>Ruch gracza: {player ? "X" : "O"}</p>
+        </div>
+      )}
+      {winner && <button onClick={newGame}>Nowa gra</button>}
+    </div>
   );
 };
 
