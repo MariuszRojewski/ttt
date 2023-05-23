@@ -3,28 +3,47 @@ import Board from "./Board";
 import { calculateWinner } from "../helpers";
 
 const Game = () => {
-  const [squares, setSquares] = React.useState(Array(9).fill(null));
+  const [history, setHistory] = React.useState([Array(9).fill(null)]);
+  const [stepNumber, setStepNumber] = React.useState(0);
   const [player, setPlayer] = React.useState(true);
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(history[stepNumber]);
 
   function handlePlayerSquareSelect(index) {
-    const board = [...squares];
+    const timeInHistory = history.slice(0, stepNumber + 1);
+    const current = timeInHistory[stepNumber];
+    const squares = [...current];
 
-    if (board[index] || winner) return;
+    if (squares[index] || winner) return;
 
-    board[index] = player ? "X" : "O";
-    setSquares(board);
+    squares[index] = player ? "X" : "O";
+    setHistory([...timeInHistory, squares]);
+    setStepNumber(timeInHistory.length);
     setPlayer(!player);
   }
 
   function newGame() {
-    setSquares(Array(9).fill(null));
+    setHistory([Array(9).fill(null)]);
     setPlayer(true);
+    setStepNumber(0);
   }
+
+  function timeTravel(step) {
+    setStepNumber(step);
+    setPlayer(step % 2 === 0);
+  }
+
+  const lineOfTime = history.map((_step, move) => {
+    const destination = move ? `Ruchu numer ${move}` : "Ruch otwierający";
+    return (
+      <li key={move}>
+        <button onClick={() => timeTravel(move)}>{destination}</button>
+      </li>
+    );
+  });
 
   return (
     <div className="game">
-      <Board squares={squares} onClick={handlePlayerSquareSelect} />
+      <Board squares={history[stepNumber]} onClick={handlePlayerSquareSelect} />
       {winner ? (
         <div className="winner">
           <p>Wygrywa gracz: {winner}</p>
@@ -34,7 +53,10 @@ const Game = () => {
           <p>Ruch gracza: {player ? "X" : "O"}</p>
         </div>
       )}
-      {winner && <button onClick={newGame}>Nowa gra</button>}
+      <div className="time--travel">
+        <ul>{lineOfTime}</ul>
+        {winner && <button onClick={newGame}>Nowa gra</button>}
+      </div>
     </div>
   );
 };
